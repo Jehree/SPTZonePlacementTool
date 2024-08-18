@@ -18,7 +18,7 @@ using UnityEngine.SceneManagement;
 
 namespace ObjectPlacementTool
 {
-    internal class InteractableComponent : InteractableObject, GInterface114
+    internal class InteractableComponent : InteractableObject
     {
 
         public List<ActionsTypesClass> Actions = new List<ActionsTypesClass>();

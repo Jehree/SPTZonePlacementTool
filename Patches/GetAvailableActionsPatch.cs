@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static RootMotion.FinalIK.InteractionTrigger.Range;
 
 namespace ObjectPlacementTool.Patches
 {
@@ -19,10 +20,11 @@ namespace ObjectPlacementTool.Patches
         }
 
         [PatchPrefix]
-        public static bool PatchPrefix(GamePlayerOwner owner, [CanBeNull] GInterface102 interactive, ref ActionsReturnClass __result)
+        public static bool PatchPrefix(object[] __args, ref ActionsReturnClass __result)
         {
-            if (!(interactive is InteractableComponent)) return true;
-            var customInteractable = interactive as InteractableComponent;
+            // __args[1] is a GInterface called "interactive", it represents the component that enables interaction
+            if (!(__args[1] is InteractableComponent)) return true;
+            var customInteractable = __args[1] as InteractableComponent;
 
             __result = new ActionsReturnClass()
             {
