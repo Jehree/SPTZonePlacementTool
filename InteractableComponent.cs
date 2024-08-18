@@ -1,10 +1,12 @@
 ﻿using Comfort.Common;
 using EFT;
+using EFT.CameraControl;
 using EFT.HealthSystem;
 using EFT.InputSystem;
 using EFT.Interactive;
 using EFT.UI;
 using HarmonyLib;
+using RootMotion.Demos;
 using SPT.Reflection.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,17 +17,20 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ZonePlacementTool.Helpers;
 
-namespace ObjectPlacementTool
+namespace ZonePlacementTool
 {
-    internal class InteractableComponent : InteractableObject
+    public class InteractableComponent : InteractableObject
     {
 
         public List<ActionsTypesClass> Actions = new List<ActionsTypesClass>();
+        public GameObject Parent { get; private set; }
 
         public void Init()
         {
             this.gameObject.layer = LayerMask.NameToLayer("Interactive");
+            Parent = this.gameObject.transform.parent.gameObject;
 
             Actions.AddRange(
                 new List<ActionsTypesClass>()
@@ -35,72 +40,178 @@ namespace ObjectPlacementTool
                         Name = "Select / Unselect",
                         Action = () =>
                         {
-                            if (Plugin.TargetObject == null)
+                            if (Plugin.TargetInteractableComponent == null)
                             {
                                 Plugin.SelectObject(this.gameObject);
+                                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponAssemble);
                             }
-                            else if (Plugin.TargetObject == this.gameObject)
+                            else if (Plugin.TargetInteractableComponent == this)
                             {
                                 Plugin.UnselectObject();
+                                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponDisassemble);
                             }
                             else
                             {
                                 Plugin.UnselectObject();
                                 Plugin.SelectObject(this.gameObject);
+                                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponAssemble);
                             }
+                            
                         }
                     },
                     new ActionsTypesClass
                     {
-                        Name = "Rename (press escape to free cursor)",
-                        Action = () =>
-                        {
-                            ShowNotesUI();
-                            FillNotesText(this.gameObject.name);
-                        }
+                        Name = "Move To Player Feet",
+                        Action = ResetTranslation
+                    },
+                    new ActionsTypesClass
+                    {
+                        Name = "Reset Scale",
+                        Action = ResetScale
+                    },
+                    new ActionsTypesClass
+                    {
+                        Name = "Reset Rotation",
+                        Action = ResetRotation
+                    },
+                    new ActionsTypesClass
+                    {
+                        Name = "Face Camera Direction",
+                        Action = MatchPlayerYRotation
                     },
                     new ActionsTypesClass
                     {
                         Name = "Delete",
-                        Action = () =>
-                        {
-                            Plugin.UnselectObject();
-                            this.gameObject.transform.position = new Vector3(0, 0, -9999);
-                            Destroy(this.gameObject, 2);
-                        }
+                        Action = Delete
                     }
                 }
             );
         }
 
-        public void ShowNotesUI()
+        public void ResetRotation()
         {
-            Plugin.LockInput = true;
-            Plugin.InventoryUI.ShowGameObject(true);
-            Plugin.TasksUI.gameObject.SetActive(true);
-            Plugin.NoteUIPanel.Show(UpdateName, EndRename);
+            Parent.transform.rotation = Quaternion.identity;
+            this.gameObject.transform.rotation = Quaternion.identity;
+            Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.GeneratorTurnOff);
         }
 
-        public void FillNotesText(string text)
+        public void MatchPlayerYRotation()
         {
-            var tmpField = AccessTools.Field(typeof(NoteWindow), "_note");
-            TMP_InputField tmp = tmpField.GetValue(Plugin.NoteUIPanel) as TMP_InputField;
-            tmp.text = text;
-            tmpField.SetValue(Plugin.NoteUIPanel, tmp);
+            Vector3 cameraEulerAngles = Plugin.Player.CameraPosition.rotation.eulerAngles;
+            Vector3 newObjectEulerAngles = new Vector3(0, cameraEulerAngles.y, 0);
+            Parent.transform.rotation = Quaternion.Euler(newObjectEulerAngles);
+            Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.GeneratorTurnOff);
         }
 
-        public void UpdateName(string newName)
+        public void ResetTranslation()
         {
-            this.gameObject.name = newName;
-            EndRename();
+            Parent.transform.position = Plugin.Player.Transform.position;
+            Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.GeneratorTurnOff);
         }
 
-        public void EndRename()
+        public void ResetScale()
         {
-            Plugin.NoteUIPanel.Hide();
-            Plugin.TasksUI.gameObject.SetActive(false);
-            Plugin.InventoryUI.gameObject.SetActive(false);
-            Plugin.LockInput = false;
+            this.gameObject.transform.localScale = new Vector3(1, 1, 1);
+            Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.GeneratorTurnOff);
+        }
+
+        public void Delete()
+        {
+            Plugin.UnselectObject();
+            this.gameObject.transform.position = new Vector3(0, 0, -9999);
+            Destroy(this.gameObject, 2);
+            Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuEscape);
+        }
+
+        public void TranslateMe(string axis, float amount)
+        {
+            Vector3 translation = new Vector3(0, 0, 0);
+
+            switch (axis)
+            {
+                case "x": translation = new Vector3(amount, 0, 0); break;
+                case "y": translation = new Vector3(0, amount, 0); break;
+                case "z": translation = new Vector3(0, 0, amount); break;
+            }
+
+            Parent.transform.Translate(translation, Space.Self);
+        }
+
+        public void ScaleMe(string axis, float amount)
+        {
+            Vector3 scaleAmount = new Vector3(0, 0, 0);
+
+            switch (axis)
+            {
+                case "x": scaleAmount = new Vector3(amount, 0, 0); break;
+                case "y": scaleAmount = new Vector3(0, amount, 0); break;
+                case "z": scaleAmount = new Vector3(0, 0, amount); break;
+            }
+
+            this.gameObject.transform.localScale = this.gameObject.transform.localScale + scaleAmount;
+        }
+
+        public void RotateMe(string axis, float amount)
+        {
+            Vector3 rotation = new Vector3(0, 0, 0);
+
+            switch (axis)
+            {
+                case "x": rotation = new Vector3(0, amount, 0); break;
+                case "y": rotation = new Vector3(0, 0, amount); break;
+                case "z": rotation = new Vector3(amount, 0, 0); break;
+            }
+
+            if (axis == "x")
+            {
+                Parent.transform.localRotation = Parent.transform.localRotation * Quaternion.Euler(rotation);
+            }
+            else
+            {
+                this.gameObject.transform.localRotation = this.gameObject.transform.localRotation * Quaternion.Euler(rotation);
+            }
+            
+        }
+
+        public void SetColor(Color color)
+        {
+            this.gameObject.GetComponent<Renderer>().material.color = color;
+        }
+
+        public void SetName(string name)
+        {
+            this.gameObject.name = name;
+            Parent.name = name + "_parent";
+        }
+
+        public string GetName()
+        {
+            return this.gameObject.name;
+        }
+
+        public static void Spawn()
+        {
+            if (Settings.SelectedObjectName.Value == "")
+            {
+                ConsoleScreen.LogError($"{Plugin.MOD_NAME}: You must give your new zone object a name!");
+                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.ErrorMessage);
+                return;
+            }
+
+            GameObject parent = new GameObject();
+
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.GetComponent<Renderer>().enabled = true;
+            cube.transform.parent = parent.transform;
+            cube.AddComponent<InteractableComponent>();
+            InteractableComponent interactableComponent = cube.GetComponent<InteractableComponent>();
+            interactableComponent.Init();
+            interactableComponent.ResetTranslation();
+            interactableComponent.MatchPlayerYRotation();
+            interactableComponent.SetName(Settings.SelectedObjectName.Value);
+
+            Plugin.SelectObject(cube);
+            Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.InsuranceInsured);
         }
     }
 }

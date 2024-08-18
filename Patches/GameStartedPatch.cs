@@ -1,7 +1,7 @@
 ﻿using Comfort.Common;
 using EFT;
 using SPT.Reflection.Patching;
-using ObjectPlacementTool.Helpers;
+using ZonePlacementTool.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ using UnityEngine;
 using EFT.UI;
 using UnityEngine.SceneManagement;
 
-namespace ObjectPlacementTool.Patches
+namespace ZonePlacementTool.Patches
 {
     internal class GameStartedPatch : ModulePatch
     {
@@ -27,8 +27,7 @@ namespace ObjectPlacementTool.Patches
             if (!Settings.ModEnabled.Value) return;
 
             Plugin.Player = Singleton<GameWorld>.Instance.MainPlayer;
+            Settings.OnGameStarted();
         }
-
-
     }
 }

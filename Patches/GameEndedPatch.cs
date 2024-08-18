@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ObjectPlacementTool.Patches
+namespace ZonePlacementTool.Patches
 {
     internal class GameEndedPatch : ModulePatch
     {
@@ -29,7 +29,7 @@ namespace ObjectPlacementTool.Patches
         [PatchPostfix]
         public static void Postfix()
         {
-            Plugin.TargetObject = null;
+            Plugin.TargetInteractableComponent = null;
             Plugin.Player = null;
         }
     }

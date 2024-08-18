@@ -5,25 +5,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ObjectPlacementTool.ExamplePatches;
-using ObjectPlacementTool.Helpers;
+using ZonePlacementTool.ExamplePatches;
+using ZonePlacementTool.Helpers;
 using UnityEngine;
-using ObjectPlacementTool.Patches;
+using ZonePlacementTool.Patches;
 using EFT.InputSystem;
 using EFT;
 using Comfort.Net;
 using Comfort.Common;
 using EFT.UI;
 
-namespace ObjectPlacementTool
+namespace ZonePlacementTool
 {
-    [BepInPlugin("Jehree.ObjectPlacementTool", "ObjectPlacementTool", "1.0.0")]
+    [BepInPlugin("Jehree.ZonePlacementTool", "ZonePlacementTool", "1.0.0")] 
     public class Plugin : BaseUnityPlugin
     {
-        public const string MOD_NAME = "Object Placement Tool";
+        public const string MOD_NAME = "Jehree's Zone Placement Tool";
 
         public static ManualLogSource LogSource;
-        public static GameObject TargetObject;
+        public static InteractableComponent TargetInteractableComponent;
         public static Player Player;
         public static NoteWindow NoteUIPanel;
         public static InventoryScreen InventoryUI;
@@ -46,9 +46,6 @@ namespace ObjectPlacementTool
             new GameStartedPatch().Enable();
             new GameEndedPatch().Enable();
             new GetAvailableActionsPatch().Enable();
-            new NoteWindowAwakePatch().Enable();
-            new InventoryScreenAwakePatch().Enable();
-            new TasksScreenAwakePatch().Enable();
         }
 
         private void Update()
@@ -56,49 +53,26 @@ namespace ObjectPlacementTool
 
             if (!Settings.ModEnabled.Value || LockInput) return;
             if (Player == null) return;
+            if (TargetInteractableComponent == null) return;
 
-            if (Settings.SpawnObjectKey.Value.IsDown())
-            {
-                SpawnObject();
-            }
-
-            if (TargetObject == null) return;
-
-            if (Settings.ResetKey.Value.IsDown())
-            {
-                switch (Mode)
-                {
-                    case InputMode.Rotate:
-                    {
-                        TargetObject.transform.rotation = Quaternion.identity;
-                        break;
-                    }
-                    case InputMode.Translate:
-                    {
-                        TargetObject.transform.position = Player.Transform.position;
-                        break;
-                    }
-                    case InputMode.Scale:
-                    {
-                        TargetObject.transform.localScale = new Vector3(1, 1, 1);
-                        break;
-                    }
-                }
-            }
             if (Settings.TranslateKey.Value.IsDown())
             {
                 Mode = InputMode.Translate;
-                TargetObject.GetComponent<Renderer>().material.color = Color.green;
+                TargetInteractableComponent.SetColor(Color.green);
+                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuInstallModFunc);
             }
             if (Settings.ScaleKey.Value.IsDown())
             {
                 Mode = InputMode.Scale;
-                TargetObject.GetComponent<Renderer>().material.color = Color.blue;
+                TargetInteractableComponent.SetColor(Color.blue);
+                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuInstallModGear);
+
             }
             if (Settings.RotateKey.Value.IsDown())
             {
                 Mode = InputMode.Rotate;
-                TargetObject.GetComponent<Renderer>().material.color = Color.red;
+                TargetInteractableComponent.SetColor(Color.red);
+                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuInstallModVital);
             }
 
             float delta = Time.deltaTime;
@@ -125,71 +99,54 @@ namespace ObjectPlacementTool
 
         }
 
-        public static void SpawnObject()
-        {
-            if (NoteUIPanel == null)
-            {
-                EFT.UI.ConsoleScreen.LogError($"{MOD_NAME}: Before you can spawn or interact with any object, go to your tasks screen and click `Add Note`. I know it's weird, but it is inactive then the game starts so the mod can't find it. After opening it once you won't need to for the rest of the raid.");
-                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.ErrorMessage);
-                return;
-            }
-
-            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.GetComponent<Renderer>().enabled = true;
-            cube.transform.position = Singleton<GameWorld>.Instance.MainPlayer.Transform.position;
-            cube.name = "target_object";
-            cube.AddComponent<InteractableComponent>();
-            cube.GetComponent<InteractableComponent>().Init();
-
-            Plugin.SelectObject(cube);
-        }
-
         public static void SelectObject(GameObject obj)
         {
-            if (NoteUIPanel == null)
-            {
-                LogSource.LogError("You need to open a note window to so the mod can ref that game object before you select any objects!");
-                return;
-            }
-
             UnselectObject();
-            TargetObject = obj;
+            TargetInteractableComponent = obj.GetComponent<InteractableComponent>();
             Mode = InputMode.Translate;
-            TargetObject.GetComponent<Renderer>().material.color = Color.green;
+            TargetInteractableComponent.SetColor(Color.green);
+            Settings.SelectedObjectName.Value = TargetInteractableComponent.GetName();
         }
 
         public static void UnselectObject()
         {
-            if (TargetObject == null) return;
-            TargetObject.GetComponent<Renderer>().material.color = Color.magenta;
-            TargetObject = null;
+            if (TargetInteractableComponent == null) return;
+            if (Settings.SelectedObjectName.Value == "")
+            {
+                ConsoleScreen.LogError($"{MOD_NAME}: Your object has an empty name! SOMETHING WILL EXPLODE AHHH FIX IT NOW");
+                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.ErrorMessage);
+            }
+            TargetInteractableComponent.SetName(Settings.SelectedObjectName.Value);
+            TargetInteractableComponent.SetColor(Color.magenta);
+            TargetInteractableComponent = null;
+            Settings.SelectedObjectName.Value = "";
         }
 
         public static void HandleScaling(float speed, float delta)
         {
             if (Settings.PositiveXKey.Value.IsPressed())
             {
-                ScaleTargetObject("x", speed * delta);
+                TargetInteractableComponent.ScaleMe("x", speed * delta);
             }
             if (Settings.NegativeXKey.Value.IsPressed())
             {
-                ScaleTargetObject("x", -(speed * delta));
+                TargetInteractableComponent.ScaleMe("x", -(speed * delta));
             }
             if (Settings.PositiveYKey.Value.IsPressed())
             {
-                ScaleTargetObject("y", speed * delta);
+                TargetInteractableComponent.ScaleMe("y", speed * delta);
             }
             if (Settings.NegativeYKey.Value.IsPressed())
             {
-                ScaleTargetObject("y", -(speed * delta));
+                TargetInteractableComponent.ScaleMe("y", -(speed * delta));
             }
             if (Settings.PositiveZKey.Value.IsPressed())
             {
-                ScaleTargetObject("z", speed * delta);
+                TargetInteractableComponent.ScaleMe("z", speed * delta);
             }
             if (Settings.NegativeZKey.Value.IsPressed())
             {
-                ScaleTargetObject("z", -(speed * delta));
+                TargetInteractableComponent.ScaleMe("z", -(speed * delta));
             }
         }
 
@@ -199,27 +156,27 @@ namespace ObjectPlacementTool
 
             if (Settings.PositiveXKey.Value.IsPressed())
             {
-                RotateTargetObject("x", rotSpeed * delta);
+                TargetInteractableComponent.RotateMe("x", rotSpeed * delta);
             }
             if (Settings.NegativeXKey.Value.IsPressed())
             {
-                RotateTargetObject("x", -rotSpeed * delta);
+                TargetInteractableComponent.RotateMe("x", -rotSpeed * delta);
             }
             if (Settings.PositiveYKey.Value.IsPressed())
             {
-                RotateTargetObject("y", rotSpeed * delta);
+                TargetInteractableComponent.RotateMe("y", rotSpeed * delta);
             }
             if (Settings.NegativeYKey.Value.IsPressed())
             {
-                RotateTargetObject("y", -rotSpeed * delta);
+                TargetInteractableComponent.RotateMe("y", -rotSpeed * delta);
             }
             if (Settings.PositiveZKey.Value.IsPressed())
             {
-                RotateTargetObject("z", rotSpeed * delta);
+                TargetInteractableComponent.RotateMe("z", rotSpeed * delta);
             }
             if (Settings.NegativeZKey.Value.IsPressed())
             {
-                RotateTargetObject("z", -rotSpeed * delta);
+                TargetInteractableComponent.RotateMe("z", -rotSpeed * delta);
             }
         }
 
@@ -227,70 +184,28 @@ namespace ObjectPlacementTool
         {
             if (Settings.PositiveXKey.Value.IsPressed())
             {
-                TranslateTargetObject("x", speed * delta);
+                TargetInteractableComponent.TranslateMe("x", speed * delta);
             }
             if (Settings.NegativeXKey.Value.IsPressed())
             {
-                TranslateTargetObject("x", -(speed * delta));
+                TargetInteractableComponent.TranslateMe("x", -(speed * delta));
             }
             if (Settings.PositiveYKey.Value.IsPressed())
             {
-                TranslateTargetObject("y", speed * delta);
+                TargetInteractableComponent.TranslateMe("y", speed * delta);
             }
             if (Settings.NegativeYKey.Value.IsPressed())
             {
-                TranslateTargetObject("y", -(speed * delta));
+                TargetInteractableComponent.TranslateMe("y", -(speed * delta));
             }
             if (Settings.PositiveZKey.Value.IsPressed())
             {
-                TranslateTargetObject("z", speed * delta);
+                TargetInteractableComponent.TranslateMe("z", speed * delta);
             }
             if (Settings.NegativeZKey.Value.IsPressed())
             {
-                TranslateTargetObject("z", -(speed * delta));
+                TargetInteractableComponent.TranslateMe("z", -(speed * delta));
             }
-        }
-
-        public static void TranslateTargetObject(string axis, float amount)
-        {
-            Vector3 translation = new Vector3(0,0,0);
-
-            switch(axis)
-            {
-                case "x": translation = new Vector3(amount, 0, 0); break;
-                case "y": translation = new Vector3(0, amount, 0); break;
-                case "z": translation = new Vector3(0, 0, amount); break;
-            }
-
-            TargetObject.transform.position = TargetObject.transform.position + translation;
-        }
-
-        public static void ScaleTargetObject(string axis, float amount)
-        {
-            Vector3 scaleAmount = new Vector3(0, 0, 0);
-
-            switch (axis)
-            {
-                case "x": scaleAmount = new Vector3(amount, 0, 0); break;
-                case "y": scaleAmount = new Vector3(0, amount, 0); break;
-                case "z": scaleAmount = new Vector3(0, 0, amount); break;
-            }
-
-            TargetObject.transform.localScale = TargetObject.transform.localScale + scaleAmount;
-        }
-
-        public static void RotateTargetObject(string axis, float amount)
-        {
-            Vector3 rotation = new Vector3(0, 0, 0);
-
-            switch (axis)
-            {
-                case "x": rotation = new Vector3(amount, 0, 0); break;
-                case "y": rotation = new Vector3(0, amount, 0); break;
-                case "z": rotation = new Vector3(0, 0, amount); break;
-            }
-
-            TargetObject.transform.rotation = TargetObject.transform.rotation * Quaternion.Euler(rotation);
         }
     }
 }

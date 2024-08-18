@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ObjectPlacementTool.ExamplePatches
+namespace ZonePlacementTool.ExamplePatches
 {
     internal class SimplePatch : ModulePatch // all patches must inherit ModulePatch
     {

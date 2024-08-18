@@ -7,8 +7,8 @@
     <ProjectGuid>{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ObjectPlacementTool</RootNamespace>
-    <AssemblyName>ObjectPlacementTool</AssemblyName>
+    <RootNamespace>ZonePlacementTool</RootNamespace>
+    <AssemblyName>ZonePlacementTool</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -117,7 +117,6 @@
     <Compile Include="Patches\GameEndedPatch.cs" />
     <Compile Include="Patches\GameStartedPatch.cs" />
     <Compile Include="Patches\GetAvailableActionsPatch.cs" />
-    <Compile Include="Patches\NoteWindowAwakePatch.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

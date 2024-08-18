@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static RootMotion.FinalIK.InteractionTrigger.Range;
 
-namespace ObjectPlacementTool.Patches
+namespace ZonePlacementTool.Patches
 {
     internal class GetAvailableActionsPatch : ModulePatch
     {
