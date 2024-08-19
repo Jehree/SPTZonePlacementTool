@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using EFT.Interactive;
+using HarmonyLib;
 using SPT.Reflection.Patching;
 using SPT.Reflection.Utils;
 using System;
@@ -20,7 +21,7 @@ namespace ZonePlacementTool.Patches
                 !targetClass.IsInterface &&
                 !targetClass.IsNested &&
                 targetClass.GetMethods().Any(method => method.Name == "OfflineRaidEnded") &&
-                targetClass.GetMethods().Any(method => method.Name == "ReceiveInsurancePrices")//
+                targetClass.GetMethods().Any(method => method.Name == "ReceiveInsurancePrices")
             );
 
             return AccessTools.Method(_targetClassType.GetTypeInfo(), "OfflineRaidEnded");
@@ -29,6 +30,8 @@ namespace ZonePlacementTool.Patches
         [PatchPostfix]
         public static void Postfix()
         {
+            Plugin.MapData.Save();
+            Plugin.MapData = null;
             Plugin.TargetInteractableComponent = null;
             Plugin.Player = null;
         }

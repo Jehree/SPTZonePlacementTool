@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using EFT.UI;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 namespace ZonePlacementTool.Patches
 {
@@ -24,10 +25,26 @@ namespace ZonePlacementTool.Patches
         [PatchPostfix]
         public static void PatchPostfix()
         {
-            if (!Settings.ModEnabled.Value) return;
-
             Plugin.Player = Singleton<GameWorld>.Instance.MainPlayer;
             Settings.OnGameStarted();
+
+            string locId = Singleton<GameWorld>.Instance.LocationId;
+            string locationJsonPath = MapData.GetPathByMapID(locId);
+
+            if (File.Exists(locationJsonPath))
+            {
+                string json = File.ReadAllText(locationJsonPath);
+                Plugin.MapData = MapData.GetDataFromJson(json);
+
+                foreach (ObjectData obj in Plugin.MapData.Objects)
+                {
+                    InteractableComponent.ForceSpawn(obj);
+                }
+            }
+            else
+            {
+                Plugin.MapData = new MapData(locId);
+            }
         }
     }
 }

@@ -43,20 +43,16 @@ namespace ZonePlacementTool
                             if (Plugin.TargetInteractableComponent == null)
                             {
                                 Plugin.SelectObject(this.gameObject);
-                                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponAssemble);
                             }
                             else if (Plugin.TargetInteractableComponent == this)
                             {
                                 Plugin.UnselectObject();
-                                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponDisassemble);
                             }
                             else
                             {
-                                Plugin.UnselectObject();
+                                Plugin.UnselectObject(mute:true);
                                 Plugin.SelectObject(this.gameObject);
-                                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponAssemble);
                             }
-                            
                         }
                     },
                     new ActionsTypesClass
@@ -92,6 +88,7 @@ namespace ZonePlacementTool
         {
             Parent.transform.rotation = Quaternion.identity;
             this.gameObject.transform.rotation = Quaternion.identity;
+            Plugin.MapData.Save();
             Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.GeneratorTurnOff);
         }
 
@@ -100,29 +97,36 @@ namespace ZonePlacementTool
             Vector3 cameraEulerAngles = Plugin.Player.CameraPosition.rotation.eulerAngles;
             Vector3 newObjectEulerAngles = new Vector3(0, cameraEulerAngles.y, 0);
             Parent.transform.rotation = Quaternion.Euler(newObjectEulerAngles);
+            Plugin.MapData.Save();
             Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.GeneratorTurnOff);
         }
 
         public void ResetTranslation()
         {
             Parent.transform.position = Plugin.Player.Transform.position;
+            Plugin.MapData.Save();
             Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.GeneratorTurnOff);
         }
 
         public void ResetScale()
         {
             this.gameObject.transform.localScale = new Vector3(1, 1, 1);
+            Plugin.MapData.Save();
             Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.GeneratorTurnOff);
         }
 
         public void Delete()
         {
-            Plugin.UnselectObject();
+            Plugin.UnselectObject(mute:true);
+            MapDataUtils.RemoveObjectData(GetName());
+            Plugin.MapData.Save();
+            Settings.SelectedObjectName.Value = "";
+
             this.gameObject.transform.position = new Vector3(0, 0, -9999);
-            Destroy(this.gameObject, 2);
+            Destroy(this.gameObject, 3);
             Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuEscape);
         }
-
+         
         public void TranslateMe(string axis, float amount)
         {
             Vector3 translation = new Vector3(0, 0, 0);
@@ -189,11 +193,33 @@ namespace ZonePlacementTool
             return this.gameObject.name;
         }
 
+        public Vector3 GetPosition()
+        {
+            return Parent.transform.position;
+        }
+
+        public Vector3 GetScale()
+        {
+            return this.gameObject.transform.localScale;
+        }
+
+        public Quaternion GetRotation()
+        {
+            return this.gameObject.transform.rotation;
+        }
+
         public static void Spawn()
         {
             if (Settings.SelectedObjectName.Value == "")
             {
                 ConsoleScreen.LogError($"{Plugin.MOD_NAME}: You must give your new zone object a name!");
+                Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.ErrorMessage);
+                return;
+            }
+
+            if (MapDataUtils.ObjectDataExists(Settings.SelectedObjectName.Value))
+            {
+                ConsoleScreen.LogError($"{Plugin.MOD_NAME}: An object by the name of {Settings.SelectedObjectName.Value} already exists!");
                 Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.ErrorMessage);
                 return;
             }
@@ -210,8 +236,65 @@ namespace ZonePlacementTool
             interactableComponent.MatchPlayerYRotation();
             interactableComponent.SetName(Settings.SelectedObjectName.Value);
 
-            Plugin.SelectObject(cube);
+            Plugin.SelectObject(cube, mute:true);
             Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.InsuranceInsured);
+
+            ObjectData objectData = MapDataUtils.CreateObjectData(interactableComponent);
+            MapDataUtils.AddObjectData(objectData);
+        }
+
+        public static void ForceSpawn(ObjectData data)
+        {
+            GameObject parent = new GameObject();
+
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.parent = parent.transform;
+
+            parent.name = data.Name + "_parent";
+            parent.transform.position = data.Position;
+            parent.transform.rotation = data.ParentRotation;
+
+            cube.transform.rotation = data.ChildRotation;
+            cube.transform.localScale = data.Scale;
+
+            cube.AddComponent<InteractableComponent>();
+            InteractableComponent interactableComponent = cube.GetComponent<InteractableComponent>();
+            interactableComponent.Init();
+            interactableComponent.SetName(data.Name);
+
+            Renderer renderer = interactableComponent.GetComponent<Renderer>();
+            renderer.enabled = true;
+            renderer.material.color = Color.magenta;
+        }
+
+        public static Material GetTransparentMaterial(Color color, float transparency)
+        {
+            Color transparentColor = new Color(color.r, color.g, color.b, transparency);
+
+            // Create a new material with the Standard Shader
+            Material transparentMaterial = new Material(Shader.Find("Standard"));
+
+            // Set the material to use transparency
+            transparentMaterial.SetFloat("_Mode", 3); // 3 is the mode for Transparent
+            transparentMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            transparentMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            transparentMaterial.SetInt("_ZWrite", 0);
+            transparentMaterial.DisableKeyword("_ALPHATEST_ON");
+            transparentMaterial.EnableKeyword("_ALPHABLEND_ON");
+            transparentMaterial.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            transparentMaterial.renderQueue = 3000; // Ensure it's rendered after opaque objects
+            transparentMaterial.SetFloat("_Glossiness", 0f);
+
+
+            // Set the color with alpha for transparency
+            transparentMaterial.color = transparentColor;
+
+            return transparentMaterial;
+        }
+
+        public static Color GetTransparentColor(Color color, float transparency)
+        {
+            return new Color(color.r, color.g, color.b, transparency);
         }
     }
 }

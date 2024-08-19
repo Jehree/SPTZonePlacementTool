@@ -9,13 +9,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
-using static GClass1750;
 
 namespace ZonePlacementTool.Helpers
 {
     internal class Settings
     {
-        public static ConfigEntry<bool> ModEnabled;
         public static ConfigEntry<float> ChangeSpeed;
 
         public static ConfigEntry<KeyboardShortcut> PositiveXKey;
@@ -31,26 +29,22 @@ namespace ZonePlacementTool.Helpers
 
         public static ConfigEntry<string> SelectedObjectName;
 
+        public static ConfigEntry<string> ClosestExfilName;
+
         public static void Init(ConfigFile config)
         {
-            ModEnabled = config.Bind(
-                "1.0: Mod",
-                "Mod Enabled",
-                true
-            );
-
             SelectedObjectName = config.Bind(
-                "2.0: Object Control",
-                "Selected Object Name (change before unselecting)",
+                "1.0: Object Control",
+                "Selected Object Name",
                 ""
             );
             ChangeSpeed = config.Bind(
-                "2.0: Object Control",
+                "1.0: Object Control",
                 "Change Speed",
                 3f
             );
             config.Bind(
-                "2.0: Object Control",
+                "1.0: Object Control",
                 "Spawn Object (name required)",
                 "",
                 new ConfigDescription(
@@ -59,8 +53,9 @@ namespace ZonePlacementTool.Helpers
                     new ConfigurationManagerAttributes { CustomDrawer = DrawerSpawnObject }
                 )
             );
+
             config.Bind(
-                "2.1: Object Control",
+                "1.1: Object Control",
                 "Move Object To Player Feet",
                 "",
                 new ConfigDescription(
@@ -70,7 +65,7 @@ namespace ZonePlacementTool.Helpers
                 )
             );
             config.Bind(
-                "2.1: Object Control",
+                "1.1: Object Control",
                 "Face Player Camera Direction",
                 "",
                 new ConfigDescription(
@@ -80,7 +75,7 @@ namespace ZonePlacementTool.Helpers
                 )
             );
             config.Bind(
-                "2.1: Object Control",
+                "1.1: Object Control",
                 "Unselect Object",
                 "",
                 new ConfigDescription(
@@ -91,51 +86,66 @@ namespace ZonePlacementTool.Helpers
             );
 
             PositiveZKey = config.Bind(
-                "3.0: Object Movement Keybinds",
+                "2.0: Object Movement Keybinds",
                 "1. Forward",
                 new KeyboardShortcut(KeyCode.U)
             );
             NegativeZKey = config.Bind(
-                "3.0: Object Movement Keybinds",
+                "2.0: Object Movement Keybinds",
                 "2. Backward",
                 new KeyboardShortcut(KeyCode.E)
             );
             NegativeXKey = config.Bind(
-                "3.0: Object Movement Keybinds",
+                "2.0: Object Movement Keybinds",
                 "3. Left",
                 new KeyboardShortcut(KeyCode.N)
             );
             PositiveXKey = config.Bind(
-                "3.0: Object Movement Keybinds",
+                "2.0: Object Movement Keybinds",
                 "4. Right",
                 new KeyboardShortcut(KeyCode.I)
             );
             PositiveYKey = config.Bind(
-                "3.0: Object Movement Keybinds",
+                "2.0: Object Movement Keybinds",
                 "5. Up",
                 new KeyboardShortcut(KeyCode.Y)
             );
             NegativeYKey = config.Bind(
-                "3.0: Object Movement Keybinds",
+                "2.0: Object Movement Keybinds",
                 "6. Down",
                 new KeyboardShortcut(KeyCode.L)
             );
 
-
             TranslateKey = config.Bind(
-                "4.0: Mode Keybinds",
+                "3.0: Mode Keybinds",
                 "Translate",
                 new KeyboardShortcut(KeyCode.J)
             );
             ScaleKey = config.Bind(
-                "4.0: Mode Keybinds",
+                "3.0: Mode Keybinds",
                 "Scale",
                 new KeyboardShortcut(KeyCode.H)
             );
             RotateKey = config.Bind(
-                "4.0: Mode Keybinds",
+                "3.0: Mode Keybinds",
                 "Rotate",
                 new KeyboardShortcut(KeyCode.Comma)
+            );
+
+            ClosestExfilName = config.Bind(
+                "1.2: Utilities",
+                "Closest Exfil To Player",
+                ""
+            );
+            config.Bind(
+                "1.2: Utilities",
+                "Update Closest Exfil Name",
+                "",
+                new ConfigDescription(
+                    "Puts the exfil name currently closest to player in the Closest Exfil To Player field",
+                    null,
+                    new ConfigurationManagerAttributes { CustomDrawer = DrawerUpdateClosestExfilName }
+                )
             );
         }
 
@@ -160,9 +170,16 @@ namespace ZonePlacementTool.Helpers
         {
             if (Plugin.Player == null) return;
             if (Plugin.TargetInteractableComponent == null) return;
-            InitializeButton(Plugin.UnselectObject, "Unselect Object");
+            InitializeButton(() => { Plugin.UnselectObject(); }, "Unselect Object");
         }
-
+        private static void DrawerUpdateClosestExfilName(ConfigEntryBase entry)
+        {
+            if (Plugin.Player == null) return;
+            InitializeButton(() => { 
+                string name = Utils.GetClosestExfilName(Plugin.ExfiltrationPointList);
+                ClosestExfilName.Value = name;
+            }, "Update");
+        }
         private static void InitializeButton(Action callable, string buttonName)
         {
             if (GUILayout.Button(buttonName, GUILayout.ExpandWidth(true)))
@@ -170,7 +187,6 @@ namespace ZonePlacementTool.Helpers
                 callable();
             }
         }
-
         public static void OnGameStarted()
         {
             SelectedObjectName.Value = "";
