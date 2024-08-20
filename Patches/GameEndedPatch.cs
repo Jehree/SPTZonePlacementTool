@@ -34,6 +34,7 @@ namespace ZonePlacementTool.Patches
             Plugin.MapData = null;
             Plugin.TargetInteractableComponent = null;
             Plugin.Player = null;
+            Plugin.AllInteractableComponents.Clear();
         }
     }
 }

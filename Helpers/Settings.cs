@@ -1,5 +1,7 @@
 ﻿using BepInEx.Configuration;
+using Comfort.Common;
 using EFT;
+using EFT.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,7 @@ namespace ZonePlacementTool.Helpers
         public static ConfigEntry<KeyboardShortcut> TranslateKey;
         public static ConfigEntry<KeyboardShortcut> ScaleKey;
         public static ConfigEntry<KeyboardShortcut> RotateKey;
+        public static ConfigEntry<bool> LockXAndZRotation;
 
         public static ConfigEntry<string> SelectedObjectName;
 
@@ -84,7 +87,16 @@ namespace ZonePlacementTool.Helpers
                     new ConfigurationManagerAttributes { CustomDrawer = DrawerUnselectObject }
                 )
             );
-
+            config.Bind(
+                "1.1: Object Control",
+                "Toggle All Objects",
+                "",
+                new ConfigDescription(
+                    "Toggles all objects on or off",
+                    null,
+                    new ConfigurationManagerAttributes { CustomDrawer = DrawerToggleAllObjects }
+                )
+            );
             PositiveZKey = config.Bind(
                 "2.0: Object Movement Keybinds",
                 "1. Forward",
@@ -131,7 +143,12 @@ namespace ZonePlacementTool.Helpers
                 "Rotate",
                 new KeyboardShortcut(KeyCode.Comma)
             );
-
+            LockXAndZRotation = config.Bind(
+                "3.0: Mode Keybinds",
+                "Lock X And Z Rotation Axes",
+                true
+            );
+            
             ClosestExfilName = config.Bind(
                 "1.2: Utilities",
                 "Closest Exfil To Player",
@@ -179,6 +196,24 @@ namespace ZonePlacementTool.Helpers
                 string name = Utils.GetClosestExfilName(Plugin.ExfiltrationPointList);
                 ClosestExfilName.Value = name;
             }, "Update");
+        }
+        private static void DrawerToggleAllObjects(ConfigEntryBase entry)
+        {
+            InitializeButton(() => { 
+                foreach (var x in Plugin.AllInteractableComponents)
+                {
+                    if (x.gameObject.activeSelf)
+                    {
+                        x.gameObject.SetActive(false);
+                        Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponDisassemble);
+                    }
+                    else
+                    {
+                        x.gameObject.SetActive(true);
+                        Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponAssemble);
+                    }
+                }
+            }, "Toggle Objects");
         }
         private static void InitializeButton(Action callable, string buttonName)
         {

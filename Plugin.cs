@@ -23,12 +23,13 @@ namespace ZonePlacementTool
     public class Plugin : BaseUnityPlugin
     {
         public const string MOD_NAME = "Jehree's Zone Placement Tool";
-        public static string AssemblyPath = Assembly.GetExecutingAssembly().Location;
+        public static string AssemblyPath { get; private set; } = Assembly.GetExecutingAssembly().Location;
 
         public static MapData MapData;
 
         public static ManualLogSource LogSource;
         public static InteractableComponent TargetInteractableComponent;
+        public static List<InteractableComponent> AllInteractableComponents = new List<InteractableComponent>();
         public static Player Player;
         public static NoteWindow NoteUIPanel;
         public static InventoryScreen InventoryUI;
@@ -43,17 +44,10 @@ namespace ZonePlacementTool
             Rotate
         }
 
-        public enum EShouldSelectOrUnselect
-        {
-            Should,
-            ShouldNot
-        }
-
         private void Awake()
         {
             LogSource = Logger;
             Settings.Init(Config);
-            LogSource.LogError(Path.Combine(Path.GetDirectoryName(AssemblyPath), "Locations"));
 
             new GameStartedPatch().Enable();
             new GameEndedPatch().Enable();

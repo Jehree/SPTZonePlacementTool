@@ -119,6 +119,7 @@ namespace ZonePlacementTool
         {
             Plugin.UnselectObject(mute:true);
             MapDataUtils.RemoveObjectData(GetName());
+            Plugin.AllInteractableComponents.Remove(this);
             Plugin.MapData.Save();
             Settings.SelectedObjectName.Value = "";
 
@@ -170,7 +171,7 @@ namespace ZonePlacementTool
             {
                 Parent.transform.localRotation = Parent.transform.localRotation * Quaternion.Euler(rotation);
             }
-            else
+            else if (!Settings.LockXAndZRotation.Value)
             {
                 this.gameObject.transform.localRotation = this.gameObject.transform.localRotation * Quaternion.Euler(rotation);
             }
@@ -236,11 +237,13 @@ namespace ZonePlacementTool
             interactableComponent.MatchPlayerYRotation();
             interactableComponent.SetName(Settings.SelectedObjectName.Value);
 
+            Plugin.UnselectObject();
             Plugin.SelectObject(cube, mute:true);
             Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.InsuranceInsured);
 
             ObjectData objectData = MapDataUtils.CreateObjectData(interactableComponent);
             MapDataUtils.AddObjectData(objectData);
+            Plugin.AllInteractableComponents.Add(interactableComponent);
         }
 
         public static void ForceSpawn(ObjectData data)
@@ -265,6 +268,8 @@ namespace ZonePlacementTool
             Renderer renderer = interactableComponent.GetComponent<Renderer>();
             renderer.enabled = true;
             renderer.material.color = Color.magenta;
+
+            Plugin.AllInteractableComponents.Add(interactableComponent);
         }
 
         public static Material GetTransparentMaterial(Color color, float transparency)
