@@ -35,6 +35,7 @@ namespace ZonePlacementTool.Patches
             Plugin.TargetInteractableComponent = null;
             Plugin.Player = null;
             Plugin.AllInteractableComponents.Clear();
+;           Plugin.ExfiltrationPointList.Clear();
         }
     }
 }

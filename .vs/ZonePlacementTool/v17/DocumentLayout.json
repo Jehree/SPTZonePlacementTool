@@ -3,28 +3,28 @@
   "WorkspaceRootPath": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\interactablecomponent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:interactablecomponent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|c:\\sp tarkov\\spt395_dev\\dev\\zoneplacementtool\\helpers\\settings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:helpers\\settings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\patches\\exfiltrationpointawakepatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:patches\\exfiltrationpointawakepatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\patches\\gameendedpatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:patches\\gameendedpatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:plugin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\helpers\\settings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:helpers\\settings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\patches\\gamestartedpatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:patches\\gamestartedpatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\patches\\exfiltrationpointawakepatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:patches\\exfiltrationpointawakepatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|c:\\sp tarkov\\spt395_dev\\dev\\zoneplacementtool\\interactablecomponent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|solutionrelative:interactablecomponent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9076ADE2-F4EE-4B5D-B9A6-29A054CF0A7E}|ZonePlacementTool.csproj|C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\patches\\getavailableactionspatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -49,7 +49,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
@@ -65,13 +65,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "ExfiltrationPointAwakePatch.cs",
               "DocumentMoniker": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\Patches\\ExfiltrationPointAwakePatch.cs",
               "RelativeDocumentMoniker": "Patches\\ExfiltrationPointAwakePatch.cs",
               "ToolTip": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\Patches\\ExfiltrationPointAwakePatch.cs",
               "RelativeToolTip": "Patches\\ExfiltrationPointAwakePatch.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABwAAAAYAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABwAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-19T19:20:05.949Z",
               "EditorCaption": ""
@@ -97,8 +97,7 @@
               "RelativeToolTip": "Patches\\GetAvailableActionsPatch.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-19T04:24:17.116Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-19T04:24:17.116Z"
             },
             {
               "$type": "Document",
@@ -110,18 +109,17 @@
               "RelativeToolTip": "Helpers\\MapData.cs",
               "ViewState": "AQIAAB4AAAAAAAAAAAAAADIAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-18T22:31:36.54Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-18T22:31:36.54Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "GameEndedPatch.cs",
               "DocumentMoniker": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\Patches\\GameEndedPatch.cs",
               "RelativeDocumentMoniker": "Patches\\GameEndedPatch.cs",
               "ToolTip": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\Patches\\GameEndedPatch.cs",
               "RelativeToolTip": "Patches\\GameEndedPatch.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACQAAAA1AAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACUAAAAxAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-18T20:32:24.861Z",
               "EditorCaption": ""
@@ -134,14 +132,14 @@
               "RelativeDocumentMoniker": "Patches\\GameStartedPatch.cs",
               "ToolTip": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\Patches\\GameStartedPatch.cs",
               "RelativeToolTip": "Patches\\GameStartedPatch.cs",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAAABoAAAAAAAAA",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAACoAAAANAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-18T18:56:56.735Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "InteractableComponent.cs",
               "DocumentMoniker": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\InteractableComponent.cs",
               "RelativeDocumentMoniker": "InteractableComponent.cs",
@@ -154,13 +152,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Settings.cs",
               "DocumentMoniker": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\Helpers\\Settings.cs",
               "RelativeDocumentMoniker": "Helpers\\Settings.cs",
               "ToolTip": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\Helpers\\Settings.cs",
               "RelativeToolTip": "Helpers\\Settings.cs",
-              "ViewState": "AQIAAHUAAAAAAAAAAAAgwJUAAAANAAAA",
+              "ViewState": "AQIAAKgAAAAAAAAAAIA0wMMAAABUAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-18T17:17:43.477Z",
               "EditorCaption": ""
@@ -173,7 +171,7 @@
               "RelativeDocumentMoniker": "Plugin.cs",
               "ToolTip": "C:\\SP Tarkov\\SPT395_DEV\\Dev\\ZonePlacementTool\\Plugin.cs",
               "RelativeToolTip": "Plugin.cs",
-              "ViewState": "AQIAABUAAAAAAAAAAAAAAB8AAABvAAAA",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAvwDQAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-18T17:07:53.919Z",
               "EditorCaption": ""
