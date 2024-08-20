@@ -151,17 +151,27 @@ namespace ZonePlacementTool.Helpers
             
             ClosestExfilName = config.Bind(
                 "1.2: Utilities",
-                "Closest Exfil To Player",
+                "1. Closest Exfil To Player",
                 ""
             );
             config.Bind(
                 "1.2: Utilities",
-                "Update Closest Exfil Name",
+                "2. Update Closest Exfil Name",
                 "",
                 new ConfigDescription(
                     "Puts the exfil name currently closest to player in the Closest Exfil To Player field",
                     null,
                     new ConfigurationManagerAttributes { CustomDrawer = DrawerUpdateClosestExfilName }
+                )
+            );
+            config.Bind(
+                "1.2: Utilities",
+                "3. Toggle All Exfil Zones",
+                "",
+                new ConfigDescription(
+                    "Toggles all exfil zones on and off so you can move around in them without extracting",
+                    null,
+                    new ConfigurationManagerAttributes { CustomDrawer = DrawerToggleExfils }
                 )
             );
         }
@@ -199,6 +209,8 @@ namespace ZonePlacementTool.Helpers
         }
         private static void DrawerToggleAllObjects(ConfigEntryBase entry)
         {
+            if (Plugin.Player == null) return;
+
             InitializeButton(() => { 
                 foreach (var x in Plugin.AllInteractableComponents)
                 {
@@ -214,6 +226,26 @@ namespace ZonePlacementTool.Helpers
                     }
                 }
             }, "Toggle Objects");
+        }
+        private static void DrawerToggleExfils(ConfigEntryBase entry)
+        {
+            if (Plugin.Player == null) return;
+
+            InitializeButton(() => {
+                foreach (var x in Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints)
+                {
+                    if (x.gameObject.activeSelf)
+                    {
+                        x.gameObject.SetActive(false);
+                        Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponDisassemble);
+                    }
+                    else
+                    {
+                        x.gameObject.SetActive(true);
+                        Singleton<GUISounds>.Instance.PlayUISound(EUISoundType.MenuWeaponAssemble);
+                    }
+                }
+            }, "Toggle Exfils");
         }
         private static void InitializeButton(Action callable, string buttonName)
         {

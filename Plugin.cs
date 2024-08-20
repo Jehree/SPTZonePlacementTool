@@ -19,7 +19,7 @@ using EFT.Interactive;
 
 namespace ZonePlacementTool
 {
-    [BepInPlugin("Jehree.ZonePlacementTool", "ZonePlacementTool", "1.0.0")] 
+    [BepInPlugin("Jehree.ZonePlacementTool", "ZonePlacementTool", "1.2.0")] 
     public class Plugin : BaseUnityPlugin
     {
         public const string MOD_NAME = "Jehree's Zone Placement Tool";
